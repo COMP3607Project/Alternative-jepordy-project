@@ -8,7 +8,7 @@ import java.util.List;
 
 public class CSVGameLoader implements GameLoader {
     private final String filePath;
-    private static final String DELIMITER = ",";
+    private static final String DELIMITER = ","; //finds the next value
 
     public CSVGameLoader(String filePath) {
         this.filePath = filePath;
@@ -31,3 +31,5 @@ public class CSVGameLoader implements GameLoader {
         return records;
     }
 }
+
+//CSVGameLoader Design was based off: https://www.baeldung.com/java-csv-file-array

@@ -46,3 +46,6 @@ public class JSONGameLoader implements GameLoader {
         return records;
     }
 }
+
+
+//Based on CSV but adjusted to support JSON format

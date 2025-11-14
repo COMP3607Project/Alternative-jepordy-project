@@ -75,3 +75,5 @@ public class XMLGameLoader implements GameLoader {
         return false;
     }
 }
+
+//Based off this example: https://www.geeksforgeeks.org/java/read-and-write-xml-files-in-java/
