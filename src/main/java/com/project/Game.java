@@ -6,35 +6,76 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Game {
+    private static Game instance;
     private List<Player> players = new ArrayList<>(); 
-   // private GameLoader gameloader; 
-   // private Logger logger; 
+    private Logger logger; 
     private Gameboard gameboard; 
-   // private ReportGenerator reportGenerator; 
+    private ReportGenerator reportGenerator;
+    private List<Observer> observers = new ArrayList<>();
+
+    private Game() {
+        // Private constructor to prevent instantiation
+        this.logger = Logger.getInstance();
+        this.reportGenerator = ReportGenerator.getInstance();
+        registerObserver(logger);
+        registerObserver(reportGenerator);
+    }
+
+    public static synchronized Game getInstance() {
+        if (instance == null) {
+            instance = new Game();
+        }
+        return instance;
+    }
+
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update();
+        }
+    }
 
     public void startGame(){
         players = new ArrayList<>();
+        logger.logGameStart(0); // Will update after getting number of players
+        
         System.out.println("How many players are playing?");
         Scanner scanner = new Scanner(System.in);   
         int numPlayers = Integer.parseInt(scanner.nextLine());
+        logger.logEvent("Number of players selected: " + numPlayers);
+        
         for(int i=1; i<=numPlayers; i++){
             System.out.println("Enter name for player " + i + ": ");
             String playerName = scanner.nextLine().trim(); 
             this.players.add(new Player(playerName)); 
+            logger.logEvent("Player added: " + playerName);
         }
+        
         displayPlayers();
         System.out.println("These are the categories:"); 
         gameboard = new Gameboard();
  
-         List<GameLoader> loaders = new ArrayList<>();
-         loaders.add(new XMLGameLoader("sample_game_XML.xml")); 
-         loaders.add(new CSVGameLoader("sample_game_CSV.csv"));
-         loaders.add(new JSONGameLoader("sample_game_JSON.json"));
-         List<Category> categories = loadFromMultipleSources(loaders);
+        List<GameLoader> loaders = new ArrayList<>();
+        loaders.add(new XMLGameLoader("sample_game_XML.xml")); 
+        loaders.add(new CSVGameLoader("sample_game_CSV.csv"));
+        loaders.add(new JSONGameLoader("sample_game_JSON.json"));
+        List<Category> categories = loadFromMultipleSources(loaders);
        
         gameboard.loadCategories(categories); 
+        logger.logEvent("Game board loaded with " + categories.size() + " categories");
+        
+        reportGenerator.recordGameStart(players);
+        
         gameboard.showBoard();
-        }
+        notifyObservers();
+    }
       
 
            
@@ -46,24 +87,70 @@ public class Game {
 
 
     public void endGame(){
-         //WILL ADD LATER
+        logger.logGameEnd();
+        reportGenerator.recordGameEnd(players);
+        notifyObservers();
+        displayGameSummary();
     }
 
-public void playTurn(){
-    //     System.out.println("Please pick a category");
-    //   String categoryName = scanner.nextLine().trim();
+    private void displayGameSummary() {
+        System.out.println("\n" + "=".repeat(80));
+        System.out.println("GAME SUMMARY");
+        System.out.println("=".repeat(80));
+        
+        List<Player> sortedPlayers = new ArrayList<>(players);
+        sortedPlayers.sort((p1, p2) -> Integer.compare(p2.getScore(), p1.getScore()));
+        
+        int rank = 1;
+        for (Player p : sortedPlayers) {
+            System.out.println(rank + ". " + p.getName() + " - $" + p.getScore());
+            rank++;
+        }
+        System.out.println("=".repeat(80) + "\n");
+        
+        logger.printAllLogs();
+        reportGenerator.generateReport();
+    }
 
-    //   System.out.print("Please pick a value: ");
-    //   int value = Integer.parseInt(scanner.nextLine());
+    public void playTurn(String playerName, String categoryName, int value, String playerAnswer){
+        logger.logPlayerAction(playerName, "Selected " + categoryName + " for $" + value);
+        
+        Questions question = gameboard.getQuestions(categoryName, value);
+        if (question == null) {
+            logger.logEvent("ERROR: Question not found or already used");
+            System.out.println("Question not found or already used");
+            return; 
+        }
+        
+        logger.logQuestionAsked(categoryName, value);
+        
+        boolean correct = question.getAnswer().equalsIgnoreCase(playerAnswer);
+        logger.logAnswer(playerName, playerAnswer, correct);
+        
+        int pointsEarned = 0;
+        if (correct) {
+            pointsEarned = value;
+            updatePlayerScore(playerName, pointsEarned);
+        }
+        
+        gameboard.flagQuestion(question);
+        
+        reportGenerator.recordTurn(playerName, categoryName, value, 
+                                  question.getQuestions(), playerAnswer, 
+                                  correct, pointsEarned, players);
+        
+        notifyObservers();
+    }
 
-    //    Questions question = gameBoard.getQuestions(categoryName, value); 
-    
-    //    if(question == null){
-    //     System.out.print("Question not found or already used");
-    //     return; 
-    //    }else{
-    //      gameboard.flagQuestion();
-}
+    private void updatePlayerScore(String playerName, int points) {
+        for (Player p : players) {
+            if (p.getName().equalsIgnoreCase(playerName)) {
+                p.addScore(points);
+                logger.logScoreUpdate(playerName, p.getScore());
+                break;
+            }
+        }
+    }
 
         private List<Category> buildCategories(List<List<String>> raw){
             List<Category> categoryList = new ArrayList<>(); 
@@ -134,5 +221,21 @@ public void playTurn(){
             for(Player p: players){
                 System.out.println(p.getName() + " - $" + p.getScore());
             }
+        }
+
+        public List<Player> getPlayers() {
+            return players;
+        }
+
+        public Gameboard getGameboard() {
+            return gameboard;
+        }
+
+        public Logger getLogger() {
+            return logger;
+        }
+
+        public ReportGenerator getReportGenerator() {
+            return reportGenerator;
         }
     }

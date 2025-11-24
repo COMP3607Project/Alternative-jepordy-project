@@ -25,9 +25,8 @@ public class App
     //     System.out.println("\n\n=== XML ===");
     //     print(xmlLoader.load());
 
-        Game game = new Game();
         System.out.println("\n \n Welcome to jepordy! ");  
-        game.startGame();
+        Game.getInstance().startGame();
     }
 
     private static void print(List<List<String>> records) {

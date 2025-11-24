@@ -1,0 +1,13 @@
+com\project\AppTest.class
+com\project\CSVGameLoaderTest.class
+com\project\JSONGameLoaderTest.class
+com\project\PlayerTest.class
+com\project\CategoryTest.class
+com\project\GameboardTest.class
+com\project\LoggerTest.class
+com\project\ReportGeneratorTest.class
+com\project\GameIntegrationTest.class
+com\project\XMLGameLoaderTest.class
+com\project\QuestionTest.class
+com\project\ReportStrategyTest.class
+com\project\OptionsTest.class
