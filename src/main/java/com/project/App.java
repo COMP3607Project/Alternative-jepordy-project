@@ -16,14 +16,14 @@ public class App
         GameLoader jsonLoader = new JSONGameLoader("sample_game_JSON.json");
         GameLoader xmlLoader = new XMLGameLoader("sample_game_XML.xml");
 
-        System.out.println("=== CSV ===");
-        print(csvLoader.load());
+    //     System.out.println("=== CSV ===");
+    //     print(csvLoader.load());
 
-        System.out.println("\n\n=== JSON ===");
-        print(jsonLoader.load());
+    //     System.out.println("\n\n=== JSON ===");
+    //     print(jsonLoader.load());
 
-        System.out.println("\n\n=== XML ===");
-        print(xmlLoader.load());
+    //     System.out.println("\n\n=== XML ===");
+    //     print(xmlLoader.load());
 
         Game game = new Game();
         System.out.println("\n \n Welcome to jepordy! ");  

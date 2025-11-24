@@ -12,15 +12,24 @@ public class Gameboard {
 
 
     public void showBoard(){
+        System.out.println("\n" + "=".repeat(80));
+        System.out.println("JEOPARDY GAME BOARD");
+        System.out.println("=".repeat(80) + "\n");
+        
         for(Category c: categories){
-                  System.out.println(c.getName () + " : ");
-            for(Questions question: c.getQuestions()){
-                if(!question.getUsed()){
-                    System.out.println("    - $" + question.getValue()); 
+            System.out.println(c.getName().toUpperCase());
+            List<Questions> questions = c.getQuestions();
+            
+            for(Questions q: questions){
+                if(!q.getUsed()){
+                    System.out.print("  [$" + q.getValue() + "]");
+                } else {
+                    System.out.print("  [ANSWERED]");
                 }
-            System.out.println(); 
+            }
+            System.out.println("\n");
         }
-        }
+        System.out.println("=".repeat(80) + "\n");
     }
     public Questions getQuestions(String categoryName,int value) {
        for(Category c: categories){

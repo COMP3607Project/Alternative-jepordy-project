@@ -1,18 +1,28 @@
 package com.project;
-//import java.util.Scanner; 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class Game {
-   // private List<Player> players = new ArrayList<>(); 
+    private List<Player> players = new ArrayList<>(); 
    // private GameLoader gameloader; 
    // private Logger logger; 
     private Gameboard gameboard; 
    // private ReportGenerator reportGenerator; 
 
     public void startGame(){
+        players = new ArrayList<>();
+        System.out.println("How many players are playing?");
+        Scanner scanner = new Scanner(System.in);   
+        int numPlayers = Integer.parseInt(scanner.nextLine());
+        for(int i=1; i<=numPlayers; i++){
+            System.out.println("Enter name for player " + i + ": ");
+            String playerName = scanner.nextLine().trim(); 
+            this.players.add(new Player(playerName)); 
+        }
+        displayPlayers();
         System.out.println("These are the categories:"); 
         gameboard = new Gameboard();
  
@@ -39,24 +49,21 @@ public class Game {
          //WILL ADD LATER
     }
 
-    public void playTurn(){
+public void playTurn(){
+    //     System.out.println("Please pick a category");
+    //   String categoryName = scanner.nextLine().trim();
 
+    //   System.out.print("Please pick a value: ");
+    //   int value = Integer.parseInt(scanner.nextLine());
 
-   //     System.out.println("Please pick a category");
-        //   String categoryName = scanner.nextLine().trim();
-
-        //   System.out.print("Please pick a value: ");
-        //   int value = Integer.parseInt(scanner.nextLine());
-
-        //    Questions question = gameBoard.getQuestions(categoryName, value); 
-        
-        //    if(question == null){
-        //     System.out.print("Question not found or already used");
-        //     return; 
-        //    }else{
-        //      gameboard.flagQuestion();
-            
-        }    
+    //    Questions question = gameBoard.getQuestions(categoryName, value); 
+    
+    //    if(question == null){
+    //     System.out.print("Question not found or already used");
+    //     return; 
+    //    }else{
+    //      gameboard.flagQuestion();
+}
 
         private List<Category> buildCategories(List<List<String>> raw){
             List<Category> categoryList = new ArrayList<>(); 
@@ -121,4 +128,11 @@ public class Game {
             }
             return mergeCategories(allCategories); 
          }
+
+        public void displayPlayers(){
+            System.out.println("Current Players: ");
+            for(Player p: players){
+                System.out.println(p.getName() + " - $" + p.getScore());
+            }
+        }
     }
