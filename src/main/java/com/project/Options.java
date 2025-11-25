@@ -1,13 +1,21 @@
 package com.project;
 public class Options {
-    private final String answer; 
-    public Options(String answer){
+    private final String name; 
+    private final String letter;
 
-        this.answer =answer;
+    public Options(String letter, String name){
+        this.letter = letter; 
+        this.name =name;
+   
     }
-    public String getAnswer(){
-        return this.answer; 
+    public String getName(){
+        return this.name; 
     }
+
+    public String getLetter(){
+        return this.letter; 
+    }
+
 }
 
 
