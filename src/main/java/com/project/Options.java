@@ -1,26 +1,21 @@
 package com.project;
 public class Options {
     private final String name; 
-    private boolean isAnswer; //Marks that this option is the answer
+    private final String letter;
 
-    public Options(String name){
-
+    public Options(String letter, String name){
+        this.letter = letter; 
         this.name =name;
+   
     }
     public String getName(){
         return this.name; 
     }
 
-    public void setAnswer(boolean answer){
-        this.isAnswer = answer; 
+    public String getLetter(){
+        return this.letter; 
     }
 
-    public String getAnswer(){
-        if(isAnswer){
-            getName();
-        }
-        return null; 
-    }
 }
 
 
