@@ -4,15 +4,82 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+/**
+ * Game class implementing Subject in Observer Pattern (SOLID).
+ * Follows Single Responsibility Principle - manages game flow and notifies observers.
+ * Follows Open/Closed Principle - can add new observers without modifying Game class.
+ */
 public class Game {
    // private List<Player> players = new ArrayList<>(); 
    // private GameLoader gameloader; 
-   // private Logger logger; 
     private Gameboard gameboard; 
-   // private ReportGenerator reportGenerator; 
+   // private ReportGenerator reportGenerator;
+    
+    // Observer Pattern - List of observers
+    private List<GameObserver> observers = new ArrayList<>();
+    
+    // Case ID for process mining (unique per game session)
+    private String caseId; 
+
+    public Game() {
+        this.caseId = UUID.randomUUID().toString();
+        this.observers = new ArrayList<>();
+    }
+
+    /**
+     * Register an observer
+     */
+    public void registerObserver(GameObserver observer) {
+        observers.add(observer);
+    }
+
+    /**
+     * Remove an observer
+     * @param observer Observer to remove
+     */
+    public void removeObserver(GameObserver observer) {
+        observers.remove(observer);
+    }
+
+    /**
+     * Notify all observers of a game event (Observer Pattern)
+     * @param event The game event to notify observers about
+     */
+    private void notifyObservers(GameEvent event) {
+        for (GameObserver observer : observers) {
+            observer.update(event);
+        }
+    }
+
+    /**
+     * Helper method to create and notify a game event
+     */
+    private void logEvent(String activity, String playerId, String category, 
+                         String questionValue, String answerGiven, String result, String scoreAfterPlay) {
+        GameEvent event = new GameEvent.Builder(caseId, activity)
+            .playerId(playerId)
+            .category(category)
+            .questionValue(questionValue)
+            .answerGiven(answerGiven)
+            .result(result)
+            .scoreAfterPlay(scoreAfterPlay)
+            .build();
+        notifyObservers(event);
+    }
+
+    /**
+     * Overloaded helper for simple events without question details
+     */
+    private void logEvent(String activity) {
+        GameEvent event = new GameEvent.Builder(caseId, activity).build();
+        notifyObservers(event);
+    }
 
     public void startGame(){
+        logEvent("Start Game");
+        
         System.out.println("These are the categories:"); 
         gameboard = new Gameboard();
  
