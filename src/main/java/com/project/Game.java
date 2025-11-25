@@ -16,10 +16,9 @@ public class Game {
     // Singleton instance
     private static Game instance;
     
-   // private List<Player> players = new ArrayList<>(); 
-   // private GameLoader gameloader; 
+    private List<Player> players = new ArrayList<>(); 
     private Gameboard gameboard; 
-   // private ReportGenerator reportGenerator;
+    private List<Turn> turns = new ArrayList<>();
     
     // Observer Pattern - List of observers
     private List<GameObserver> observers = new ArrayList<>();
@@ -33,6 +32,8 @@ public class Game {
     private Game() {
         this.caseId = UUID.randomUUID().toString();
         this.observers = new ArrayList<>();
+        this.players = new ArrayList<>();
+        this.turns = new ArrayList<>();
     }
 
     /**
@@ -120,8 +121,89 @@ public class Game {
 
 
 
+    /**
+     * Add a player to the game
+     * @param player Player to add
+     */
+    public void addPlayer(Player player) {
+        players.add(player);
+        logEvent("Enter Player Name", String.valueOf(player.getId()), "", "", player.getName(), "", "0");
+    }
+
+    /**
+     * Record a turn in the game
+     * @param turn Turn to record
+     */
+    public void recordTurn(Turn turn) {
+        turns.add(turn);
+        Player player = getPlayerById(turn.getPlayerId());
+        
+        // Log the turn event
+        logEvent("Answer Question", 
+            String.valueOf(turn.getPlayerId()),
+            turn.getCategory(),
+            String.valueOf(turn.getQuestionValue()),
+            turn.getAnswer(),
+            turn.isCorrect() ? "Correct" : "Incorrect",
+            String.valueOf(turn.getScoreAfterPlay()));
+    }
+
+    /**
+     * Get player by ID
+     */
+    private Player getPlayerById(int playerId) {
+        for (Player player : players) {
+            if (player.getId() == playerId) {
+                return player;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Generate a game report using the specified format
+     * @param format Report format ("txt", "pdf", or "docx")
+     * @param filename Base filename for the report
+     */
+    public void generateReport(String format, String filename) {
+        logEvent("Generate Report");
+        
+        ReportStrategy strategy;
+        switch (format.toLowerCase()) {
+            case "txt":
+                strategy = new TxtReportStrategy();
+                break;
+            case "pdf":
+                strategy = new PdfReportStrategy();
+                break;
+            case "docx":
+                strategy = new DocxReportStrategy();
+                break;
+            default:
+                System.err.println("Unknown format: " + format + ". Using TXT format.");
+                strategy = new TxtReportStrategy();
+        }
+        
+        ReportGenerator generator = new ReportGenerator(strategy);
+        generator.generateReport(players, turns, filename);
+    }
+
+    /**
+     * Get list of players
+     */
+    public List<Player> getPlayers() {
+        return new ArrayList<>(players);
+    }
+
+    /**
+     * Get list of turns
+     */
+    public List<Turn> getTurns() {
+        return new ArrayList<>(turns);
+    }
+
     public void endGame(){
-         //WILL ADD LATER
+        logEvent("Exit Game");
     }
 
     public void playTurn(){
