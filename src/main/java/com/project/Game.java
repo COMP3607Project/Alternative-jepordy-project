@@ -7,11 +7,15 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Game class implementing Subject in Observer Pattern (SOLID).
+ * Game class implementing Singleton Pattern and Subject in Observer Pattern (SOLID).
  * Follows Single Responsibility Principle - manages game flow and notifies observers.
  * Follows Open/Closed Principle - can add new observers without modifying Game class.
+ * Singleton ensures only one game instance exists.
  */
 public class Game {
+    // Singleton instance
+    private static Game instance;
+    
    // private List<Player> players = new ArrayList<>(); 
    // private GameLoader gameloader; 
     private Gameboard gameboard; 
@@ -23,9 +27,23 @@ public class Game {
     // Case ID for process mining (unique per game session)
     private String caseId; 
 
-    public Game() {
+    /**
+     * Private constructor for Singleton Pattern
+     */
+    private Game() {
         this.caseId = UUID.randomUUID().toString();
         this.observers = new ArrayList<>();
+    }
+
+    /**
+     * Get the singleton instance of Game (Thread-safe lazy initialization)
+     * @return The single Game instance
+     */
+    public static synchronized Game getInstance() {
+        if (instance == null) {
+            instance = new Game();
+        }
+        return instance;
     }
 
     /**
