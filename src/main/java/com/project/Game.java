@@ -174,7 +174,7 @@ public class Game {
                 strategy = new TxtReportStrategy();
                 break;
             case "pdf":
-                strategy = new PdfReportStrategy();
+                strategy = new PDFReportStrategy();
                 break;
             case "docx":
                 strategy = new DocxReportStrategy();

@@ -11,7 +11,7 @@ import java.util.List;
  * Note: This is a placeholder implementation. To fully implement PDF generation,
  * add Apache PDFBox or iText dependency to pom.xml
  */
-public class PdfReportStrategy implements ReportStrategy {
+public class PDFReportStrategy implements ReportStrategy {
     
     @Override
     public void generateReport(List<Player> players, List<Turn> turns, String filename) {
