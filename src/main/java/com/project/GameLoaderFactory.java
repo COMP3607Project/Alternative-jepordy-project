@@ -1,14 +1,20 @@
 package com.project;
 
 public class GameLoaderFactory {
-    public static GameLoader getGameLoader(String type, String filePath) {
-        if (type.equalsIgnoreCase("CSV")) {
+
+    public static GameLoader getGameLoader(String filePath) {
+        String lower = filePath.toLowerCase();
+
+        if (lower.endsWith(".csv")) {
             return new CSVGameLoader(filePath);
-        } else if (type.equalsIgnoreCase("JSON")) {
+        }
+        if (lower.endsWith(".json")) {
             return new JSONGameLoader(filePath);
-        } else if (type.equalsIgnoreCase("XML")) {
+        }
+        if (lower.endsWith(".xml")) {
             return new XMLGameLoader(filePath);
         }
-        throw new IllegalArgumentException("Unknown game loader type: " + type);
+
+        throw new IllegalArgumentException("No strategy for file type: " + filePath);
     }
 }

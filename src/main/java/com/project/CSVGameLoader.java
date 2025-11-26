@@ -1,34 +1,78 @@
 package com.project;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+
+import java.io.File;
+import java.util.Scanner;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class CSVGameLoader implements GameLoader {
+
     private final String filePath;
-    private static final String DELIMITER = ","; //finds the next value
+    private final List<Category> categories = new ArrayList<>();
 
     public CSVGameLoader(String filePath) {
         this.filePath = filePath;
     }
 
     @Override
-    public List<List<String>> load() {
-        List<List<String>> records = new ArrayList<>();
+    public void load() {
+        try {
+            File file = new File(filePath);
+            Scanner scan = new Scanner(file);
 
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(DELIMITER);
-                records.add(Arrays.asList(values));
+            
+            if (scan.hasNextLine()) {
+                scan.nextLine();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        return records;
+            while (scan.hasNextLine()) {
+                String line = scan.nextLine();
+                String[] parts = line.split(",", -1);
+
+                if (parts.length < 8) continue; // Not enough columns
+
+                String categoryName = parts[0].trim();
+                int value = Integer.parseInt(parts[1].trim());
+                String questionText = parts[2].trim();
+
+                // Create options A–D
+                List<Options> options = new ArrayList<>();
+                options.add(new Options("A", parts[3].trim()));
+                options.add(new Options("B", parts[4].trim()));
+                options.add(new Options("C", parts[5].trim()));
+                options.add(new Options("D", parts[6].trim()));
+
+                String correctAnswer = parts[7].trim();
+
+                
+                Questions q = new Questions(questionText, options, value, correctAnswer);
+
+              
+                Category found = findCategory(categoryName);
+                if (found == null) {
+                    found = new Category(categoryName);
+                    categories.add(found);
+                }
+
+                found.addQuestions(q);
+            }
+
+            scan.close();
+
+        } catch (Exception e) {
+            System.out.println("ERROR LOADING CSV: " + e.getMessage());
+        }
+    }
+
+    private Category findCategory(String name) {
+        for (Category c : categories) {
+            if (c.equals(name)) return c;
+        }
+        return null;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
     }
 }
 

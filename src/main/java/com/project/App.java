@@ -12,9 +12,35 @@ public class App
     {
         System.out.println( "Hello World!" );
 
-        GameLoader csvLoader = new CSVGameLoader("sample_game_CSV.csv");
-        GameLoader jsonLoader = new JSONGameLoader("sample_game_JSON.json");
-        GameLoader xmlLoader = new XMLGameLoader("sample_game_XML.xml");
+        // GameLoader csvLoader = new CSVGameLoader("sample_game_CSV.csv");
+        // GameLoader jsonLoader = new JSONGameLoader("sample_game_JSON.json");
+        // GameLoader xmlLoader = new XMLGameLoader("sample_game_XML.xml");
+
+        //Tests for GameLoaders
+        GameLoader cLoader = GameLoaderFactory.getGameLoader("sample_game_CSV.csv");cLoader.load();
+        GameLoader jLoader = GameLoaderFactory.getGameLoader("sample_game_JSON.json");jLoader.load();
+        GameLoader xLoader = GameLoaderFactory.getGameLoader("sample_game_XML.xml");xLoader.load();
+
+        CSVGameLoader csvLoader = (CSVGameLoader) cLoader;
+        List<Category> cCategories = csvLoader.getCategories();
+
+        JSONGameLoader jsonLoader = (JSONGameLoader) jLoader;
+        List<Category> jCategories = jsonLoader.getCategories();
+
+        XMLGameLoader xmlLoader = (XMLGameLoader) xLoader;
+        List<Category> xCategories = xmlLoader.getCategories();
+// Print all categories
+        for (Category c : cCategories) {
+            System.out.println("Category: " + c.getName());
+        }
+
+        for (Category c : jCategories) {
+            System.out.println("Category: " + c.getName());
+        }
+
+        for (Category c : xCategories) {
+            System.out.println("Category: " + c.getName());
+        }
 
         // System.out.println("=== CSV ===");
         // print(csvLoader.load());
@@ -36,9 +62,9 @@ public class App
         game.startGame();
     }
 
-    private static void print(List<List<String>> records) {
-        for (List<String> row : records) {
-            System.out.println(row);
-        }
-    }
+    // private static void print(List<List<String>> records) {
+    //     for (List<String> row : records) {
+    //         System.out.println(row);
+    //     }
+    // }
 }
