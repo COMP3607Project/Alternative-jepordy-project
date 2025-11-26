@@ -5,12 +5,13 @@ package com.project;
  * Responsible only for managing player data.
  */
 public class Player {
+    private static int nextId = 1;
     private int id;
     private String name; 
     private int score; 
 
-    public Player(int id, String name){
-        this.id = id;
+    public Player(String name){
+        this.id = nextId++;
         this.name = name; 
         this.score = 0; 
     }
