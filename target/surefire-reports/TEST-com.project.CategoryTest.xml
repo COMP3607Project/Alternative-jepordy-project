@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.project.CategoryTest" time="0.18" tests="6" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.project.CategoryTest" time="0.163" tests="6" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="23"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,7 +15,7 @@
     <property name="user.country" value="US"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-23\bin"/>
-    <property name="sun.java.command" value="C:\Users\keddi\AppData\Local\Temp\surefire14428817756609771050\surefirebooter17069031886183272065.jar C:\Users\keddi\AppData\Local\Temp\surefire14428817756609771050 2025-11-21T08-02-36_721-jvmRun1 surefire591285863449376039tmp surefire_0899435510579833067tmp"/>
+    <property name="sun.java.command" value="C:\Users\keddi\AppData\Local\Temp\surefire12683051693830722746\surefirebooter4690699330976064784.jar C:\Users\keddi\AppData\Local\Temp\surefire12683051693830722746 2025-11-25T18-03-33_730-jvmRun1 surefire8855909645424757132tmp surefire_0823401139071195986tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="test" value="com.project.CategoryTest"/>
     <property name="surefire.test.class.path" value="C:\Users\keddi\Alternative-jepordy-project\target\test-classes;C:\Users\keddi\Alternative-jepordy-project\target\classes;C:\Users\keddi\.m2\repository\junit\junit\4.11\junit-4.11.jar;C:\Users\keddi\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\keddi\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.18.0\jackson-databind-2.18.0.jar;C:\Users\keddi\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.18.0\jackson-annotations-2.18.0.jar;C:\Users\keddi\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.18.0\jackson-core-2.18.0.jar;C:\Users\keddi\.m2\repository\com\fasterxml\jackson\dataformat\jackson-dataformat-xml\2.18.0\jackson-dataformat-xml-2.18.0.jar;C:\Users\keddi\.m2\repository\org\codehaus\woodstox\stax2-api\4.2.2\stax2-api-4.2.2.jar;C:\Users\keddi\.m2\repository\com\fasterxml\woodstox\woodstox-core\7.0.0\woodstox-core-7.0.0.jar;"/>
@@ -31,7 +31,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\keddi\AppData\Local\Temp\surefire14428817756609771050\surefirebooter17069031886183272065.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\keddi\AppData\Local\Temp\surefire12683051693830722746\surefirebooter4690699330976064784.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="23.0.2+7-58"/>
@@ -60,10 +60,10 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="67.0"/>
   </properties>
-  <testcase name="testFindQuestionReturnsNullWhenUsed" classname="com.project.CategoryTest" time="0.011"/>
+  <testcase name="testFindQuestionReturnsNullWhenUsed" classname="com.project.CategoryTest" time="0.014"/>
   <testcase name="testAddUsedQuestionsFails" classname="com.project.CategoryTest" time="0"/>
   <testcase name="tesFindQuestion" classname="com.project.CategoryTest" time="0"/>
   <testcase name="testCategoryEqualsIgnoreCase" classname="com.project.CategoryTest" time="0"/>
-  <testcase name="testAddQuestionsSucessfully" classname="com.project.CategoryTest" time="0.002"/>
-  <testcase name="testCategoryEqualsWithNull" classname="com.project.CategoryTest" time="0"/>
+  <testcase name="testAddQuestionsSucessfully" classname="com.project.CategoryTest" time="0.001"/>
+  <testcase name="testCategoryEqualsWithNull" classname="com.project.CategoryTest" time="0.002"/>
 </testsuite>

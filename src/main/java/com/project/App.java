@@ -28,6 +28,7 @@ public class App
         Game game = new Game();
         System.out.println("\n \n Welcome to jepordy! ");  
         game.startGame();
+        game.playTurn();
     }
 
     private static void print(List<List<String>> records) {

@@ -22,6 +22,9 @@ public class Gameboard {
         }
         }
     }
+    
+ 
+    
     public Questions getQuestions(String categoryName,int value) {
        for(Category c: categories){
             if(c.equals(categoryName)){
@@ -45,6 +48,15 @@ public class Gameboard {
     public List<Category> getCategories(){
         return categories;
     }
-
-  
+   
+    public Category getCategory(String name){
+        for(Category c: categories){
+            if(c.getName().equalsIgnoreCase(name)){
+              return c;
+            }
+          
+        }
+    
+         return null; 
+        }
 }

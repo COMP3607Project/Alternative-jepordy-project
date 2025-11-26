@@ -11,8 +11,8 @@ public class QuestionTest {
     @Test
     public void testQuestionCreation(){
         ArrayList<Options> opts = new ArrayList<>();
-        opts.add(new Options("A"));
-        opts.add(new Options("B"));
+        opts.add(new Options("A", "History"));
+        opts.add(new Options("B", "Science"));
 
         Questions q =  new Questions("What is Java?", opts, 300, "A");
         assertEquals(2, q.getOptions().size()); 
