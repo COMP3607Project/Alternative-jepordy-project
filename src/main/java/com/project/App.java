@@ -12,6 +12,15 @@ public class App
     {
         System.out.println( "Hello World!" );
 
+        Player p1 = new Player("Alice");   // id = 1
+        Player p2 = new Player("Bob");     // id = 2
+        Player p3 = new Player("Carol");   // id = 3
+        Player p4 = new Player("Dave");    // id = 4
+        System.out.println("Player 1: " + p1.getName() + ", ID: " + p1.getId());
+        System.out.println("Player 2: " + p2.getName() + ", ID: " + p2.getId());
+        System.out.println("Player 3: " + p3.getName() + ", ID: " + p3.getId());
+        System.out.println("Player 4: " + p4.getName() + ", ID: " + p4.getId());
+
         // GameLoader csvLoader = new CSVGameLoader("sample_game_CSV.csv");
         // GameLoader jsonLoader = new JSONGameLoader("sample_game_JSON.json");
         // GameLoader xmlLoader = new XMLGameLoader("sample_game_XML.xml");
