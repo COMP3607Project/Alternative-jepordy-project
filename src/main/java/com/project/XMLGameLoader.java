@@ -1,78 +1,141 @@
 package com.project;
 
-import org.w3c.dom.*;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
 import java.io.File;
+import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
 
 public class XMLGameLoader implements GameLoader {
+
     private final String filePath;
+    private final List<Category> categories = new ArrayList<>();
 
     public XMLGameLoader(String filePath) {
         this.filePath = filePath;
     }
 
     @Override
-    public List<List<String>> load() {
-        List<List<String>> records = new ArrayList<>();
-
+    public void load() {
         try {
-            File xmlFile = new File(filePath);
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(xmlFile);
-            doc.getDocumentElement().normalize();
+            
+            StringBuilder xml = new StringBuilder();
+            Scanner scan = new Scanner(new File(filePath));
 
-            NodeList questionItems = doc.getElementsByTagName("QuestionItem");
-
-            for (int i = 0; i < questionItems.getLength(); i++) {
-                Node node = questionItems.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element elem = (Element) node;
-                    List<String> record = new ArrayList<>();
-                    flattenElement(elem, record);
-                    records.add(record);
-                }
+            while (scan.hasNextLine()) {
+                xml.append(scan.nextLine().trim());
             }
+            scan.close();
+
+            String content = xml.toString();
+
+            
+            List<String> items = extractBlocks(content, "QuestionItem");
+
+            for (String block : items) {
+                parseQuestionBlock(block);
+            }
+
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return records;
-    }
-
-    /**
-     * Recursively flattens element children and adds their text content to record.
-     * Nested elements are traversed depth-first.
-     */
-    private void flattenElement(Element element, List<String> record) {
-        NodeList children = element.getChildNodes();
-
-        for (int i = 0; i < children.getLength(); i++) {
-            Node child = children.item(i);
-            if (child.getNodeType() == Node.ELEMENT_NODE) {
-                Element childElem = (Element) child;
-
-                // If child has nested element children, recurse
-                if (hasElementChildren(childElem)) {
-                    flattenElement(childElem, record);
-                } else {
-                    record.add(childElem.getTextContent().trim());
-                }
-            }
+            System.out.println("ERROR loading XML: " + e.getMessage());
         }
     }
 
-    private boolean hasElementChildren(Element element) {
-        NodeList children = element.getChildNodes();
-        for (int i = 0; i < children.getLength(); i++) {
-            if (children.item(i).getNodeType() == Node.ELEMENT_NODE) {
-                return true;
-            }
+    private void parseQuestionBlock(String xml) {
+
+        String categoryName = extractTag(xml, "Category");
+        int value = Integer.parseInt(extractTag(xml, "Value"));
+        String questionText = extractTag(xml, "QuestionText");
+
+        
+        String optionsBlock = extractTagBlock(xml, "Options");
+
+        List<Options> options = new ArrayList<>();
+        options.add(new Options("A", extractTag(optionsBlock, "OptionA")));
+        options.add(new Options("B", extractTag(optionsBlock, "OptionB")));
+        options.add(new Options("C", extractTag(optionsBlock, "OptionC")));
+        options.add(new Options("D", extractTag(optionsBlock, "OptionD")));
+
+        String correctAnswer = extractTag(xml, "CorrectAnswer");
+
+        Questions q = new Questions(questionText, options, value, correctAnswer);
+
+        
+        Category cat = findCategory(categoryName);
+        if (cat == null) {
+            cat = new Category(categoryName);
+            categories.add(cat);
         }
-        return false;
+
+        cat.addQuestions(q);
+    }
+
+   
+    private String extractTag(String xml, String tag) {
+        String open = "<" + tag + ">";
+        String close = "</" + tag + ">";
+
+        int start = xml.indexOf(open);
+        if (start == -1) return "";
+
+        start += open.length();
+        int end = xml.indexOf(close, start);
+
+        if (end == -1) return "";
+
+        return xml.substring(start, end).trim();
+    }
+
+    
+    private String extractTagBlock(String xml, String tag) {
+        String open = "<" + tag + ">";
+        String close = "</" + tag + ">";
+
+        int start = xml.indexOf(open);
+        if (start == -1) return "";
+
+        int end = xml.indexOf(close, start);
+        if (end == -1) return "";
+
+        end += close.length();
+
+        return xml.substring(start, end);
+    }
+
+    
+    private List<String> extractBlocks(String xml, String tag) {
+        List<String> blocks = new ArrayList<>();
+
+        String open = "<" + tag + ">";
+        String close = "</" + tag + ">";
+
+        int index = 0;
+
+        while (true) {
+            int start = xml.indexOf(open, index);
+            if (start == -1) break;
+
+            int end = xml.indexOf(close, start);
+            if (end == -1) break;
+
+            end += close.length();
+
+            blocks.add(xml.substring(start, end));
+
+            index = end;
+        }
+
+        return blocks;
+    }
+
+    private Category findCategory(String name) {
+        for (Category c : categories) {
+            if (c.equals(name)) return c;
+        }
+        return null;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
     }
 }
 
