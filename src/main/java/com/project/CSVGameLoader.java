@@ -16,10 +16,8 @@ public class CSVGameLoader implements GameLoader {
 
     @Override
     public void load() {
-        try {
-            File file = new File(filePath);
-            Scanner scan = new Scanner(file);
-
+        File file = new File(filePath);
+        try (Scanner scan = new Scanner(file)) {
             
             if (scan.hasNextLine()) {
                 scan.nextLine();
@@ -57,8 +55,6 @@ public class CSVGameLoader implements GameLoader {
                 found.addQuestions(q);
             }
 
-            scan.close();
-
         } catch (Exception e) {
             System.out.println("ERROR LOADING CSV: " + e.getMessage());
         }
@@ -71,6 +67,7 @@ public class CSVGameLoader implements GameLoader {
         return null;
     }
 
+    @Override
     public List<Category> getCategories() {
         return categories;
     }

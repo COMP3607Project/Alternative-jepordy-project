@@ -71,6 +71,8 @@ public class App
       //  Game game = new Game();  
         game.startGame();
         game.playTurn(); 
+        //System.out.println("Thank you for playing! Goodbye.");
+
     }
 
     // private static void print(List<List<String>> records) {
