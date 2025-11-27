@@ -64,13 +64,21 @@ public class App
         Game game = Game.getInstance();
         
         // Create and register Logger observer
-  //      Logger logger = new Logger();
-  //      game.registerObserver(logger);
+        Logger logger = new Logger();
+        game.registerObserver(logger);
         
         System.out.println("\n \n Welcome to jepordy! "); 
       //  Game game = new Game();  
         game.startGame();
-        game.playTurn(); 
+        game.playTurn();
+        
+        // Generate reports in multiple formats
+        System.out.println("\nGenerating game reports...");
+        game.generateReport("txt", "game_report");
+        game.generateReport("pdf", "game_report");
+        game.generateReport("docx", "game_report");
+        
+        game.endGame(); 
         //System.out.println("Thank you for playing! Goodbye.");
 
     }

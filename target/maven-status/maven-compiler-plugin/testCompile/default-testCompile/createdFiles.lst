@@ -5,8 +5,8 @@ com\project\PDFReportStrategyTest.class
 com\project\DocxReportStrategyTest.class
 com\project\CategoryTest.class
 com\project\GameboardTest.class
+com\project\GameLoaderFactoryTest.class
 com\project\XMLGameLoaderTest.class
 com\project\QuestionTest.class
-com\project\GameLoaderFactoryTest.class
 com\project\OptionsTest.class
 com\project\TxtReportStrategyTest.class
