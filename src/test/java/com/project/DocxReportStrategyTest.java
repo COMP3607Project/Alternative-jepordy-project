@@ -35,8 +35,8 @@ public class DocxReportStrategyTest {
         
         // Create test players
         players = new ArrayList<>();
-        players.add(new Player(1, "Charlie"));
-        players.add(new Player(2, "Diana"));
+        players.add(new Player("Charlie"));
+        players.add(new Player("Diana"));
         players.get(0).updateScore(700);
         players.get(1).updateScore(450);
         

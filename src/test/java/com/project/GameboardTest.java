@@ -17,7 +17,7 @@ public class GameboardTest {
         board = new Gameboard(); 
 
         ArrayList<Options> opts = new ArrayList<>(); 
-        opts.add(new Options("A")); 
+        opts.add(new Options("A", "hISTORY")); 
         q100 = new Questions("Q1", opts, 100, "A"); 
 
         category = new Category("History"); 

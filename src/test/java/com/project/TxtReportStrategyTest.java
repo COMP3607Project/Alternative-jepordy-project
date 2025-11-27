@@ -35,8 +35,8 @@ public class TxtReportStrategyTest {
         
         // Create test players
         players = new ArrayList<>();
-        players.add(new Player(1, "Eve"));
-        players.add(new Player(2, "Frank"));
+        players.add(new Player( "Eve"));
+        players.add(new Player( "Frank"));
         players.get(0).updateScore(850);
         players.get(1).updateScore(620);
         
