@@ -26,6 +26,6 @@ public class PresentQuestion implements GameState {
 
         System.out.println("You selected this question: \n" + question.getQuestions());
 
-        turn.setState(new ChooseOption(turn, question)); 
+        turn.setState(new ChooseOption(turn, category, question)); 
     }
 }
