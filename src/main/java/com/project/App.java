@@ -40,15 +40,71 @@ public class App
         List<Category> xCategories = xmlLoader.getCategories();
 // Print all categories
         for (Category c : cCategories) {
+            System.out.println("=====================================");
             System.out.println("Category: " + c.getName());
-        }
+            System.out.println("=====================================");
+
+            for (Questions q : c.getQuestions()) {
+
+                System.out.println("\nValue: " + q.getValue());
+                System.out.println("Question: " + q.getQuestions());
+
+                System.out.println("Options:");
+                for (Options opt : q.getOptions()) {
+                    System.out.println("  " + opt.getLetter() + ": " + opt.getName());
+                }
+
+                System.out.println("Correct Answer: " + q.getAnswer());
+                System.out.println("-------------------------------------");
+            }
+
+            System.out.println("\n\n");
+}
 
         for (Category c : jCategories) {
             System.out.println("Category: " + c.getName());
+             System.out.println("=====================================");
+            System.out.println("Category: " + c.getName());
+            System.out.println("=====================================");
+
+            for (Questions q : c.getQuestions()) {
+
+                System.out.println("\nValue: " + q.getValue());
+                System.out.println("Question: " + q.getQuestions());
+
+                System.out.println("Options:");
+                for (Options opt : q.getOptions()) {
+                    System.out.println("  " + opt.getLetter() + ": " + opt.getName());
+                }
+
+                System.out.println("Correct Answer: " + q.getAnswer());
+                System.out.println("-------------------------------------");
+            }
+
+            System.out.println("\n\n");
         }
 
         for (Category c : xCategories) {
             System.out.println("Category: " + c.getName());
+             System.out.println("=====================================");
+            System.out.println("Category: " + c.getName());
+            System.out.println("=====================================");
+
+            for (Questions q : c.getQuestions()) {
+
+                System.out.println("\nValue: " + q.getValue());
+                System.out.println("Question: " + q.getQuestions());
+
+                System.out.println("Options:");
+                for (Options opt : q.getOptions()) {
+                    System.out.println("  " + opt.getLetter() + ": " + opt.getName());
+                }
+
+                System.out.println("Correct Answer: " + q.getAnswer());
+                System.out.println("-------------------------------------");
+            }
+
+            System.out.println("\n\n");
         }
 
         // System.out.println("=== CSV ===");
