@@ -35,8 +35,8 @@ public class PDFReportStrategyTest {
         
         // Create test players
         players = new ArrayList<>();
-        players.add(new Player(1, "Alice"));
-        players.add(new Player(2, "Bob"));
+        players.add(new Player( "Alice"));
+        players.add(new Player( "Bob"));
         players.get(0).updateScore(500);
         players.get(1).updateScore(300);
         

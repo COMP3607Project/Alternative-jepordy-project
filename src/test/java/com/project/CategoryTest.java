@@ -22,10 +22,10 @@ public class CategoryTest {
     public void Setup(){
         category = new Category("History");
         ArrayList<Options> opt1 = new ArrayList<>(); 
-        opt1.add(new Options("A"));
+        opt1.add(new Options("A", "French Revolution"));
 
         ArrayList<Options> opt2 = new ArrayList<>(); 
-        opt2.add(new Options("B"));
+        opt2.add(new Options("B", "American Civil Wae"));
 
 
         q100 = new Questions("Q1", opt1 , 100, "A");
