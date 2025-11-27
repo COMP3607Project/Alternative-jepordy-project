@@ -27,143 +27,187 @@ public class XMLGameLoaderTest {
     }
 
     @Test
-    public void testLoadSimpleXML() throws IOException {
+    public void testLoadValidXML() throws IOException {
         FileWriter writer = new FileWriter(tempFile.toFile());
-        writer.write(
-            "<Root>" +
-                "<QuestionItem>" +
-                    "<Question>A?</Question>" +
-                    "<Answer1>B</Answer1>" +
-                    "<Answer2>C</Answer2>" +
-                "</QuestionItem>" +
-            "</Root>"
-        );
+        writer.write("<?xml version=\"1.0\"?>\n" +
+            "<Questions>\n" +
+            "  <QuestionItem>\n" +
+            "    <Category>Science</Category>\n" +
+            "    <Value>100</Value>\n" +
+            "    <QuestionText>What is H2O?</QuestionText>\n" +
+            "    <Options>\n" +
+            "      <OptionA>Water</OptionA>\n" +
+            "      <OptionB>Oxygen</OptionB>\n" +
+            "      <OptionC>Hydrogen</OptionC>\n" +
+            "      <OptionD>Carbon</OptionD>\n" +
+            "    </Options>\n" +
+            "    <CorrectAnswer>A</CorrectAnswer>\n" +
+            "  </QuestionItem>\n" +
+            "  <QuestionItem>\n" +
+            "    <Category>Math</Category>\n" +
+            "    <Value>200</Value>\n" +
+            "    <QuestionText>What is 2+2?</QuestionText>\n" +
+            "    <Options>\n" +
+            "      <OptionA>3</OptionA>\n" +
+            "      <OptionB>4</OptionB>\n" +
+            "      <OptionC>5</OptionC>\n" +
+            "      <OptionD>6</OptionD>\n" +
+            "    </Options>\n" +
+            "    <CorrectAnswer>B</CorrectAnswer>\n" +
+            "  </QuestionItem>\n" +
+            "</Questions>");
         writer.close();
 
         XMLGameLoader loader = new XMLGameLoader(tempFile.toString());
-        List<List<String>> result = loader.load();
+        loader.load();
+        List<Category> categories = loader.getCategories();
 
-        assertEquals(1, result.size());
-        assertEquals(3, result.get(0).size());
-        assertEquals("A?", result.get(0).get(0));
-        assertEquals("B", result.get(0).get(1));
-        assertEquals("C", result.get(0).get(2));
+        assertEquals(2, categories.size());
+        
+        Category science = categories.get(0);
+        assertEquals("Science", science.getName());
+        Questions q1 = science.getQuestions().get(0);
+        assertEquals("What is H2O?", q1.getQuestions());
+        assertEquals(100, q1.getValue());
+        assertEquals("Water", q1.getOptions().get(0).getName());
+        assertEquals("A", q1.getAnswer());
+        
+        Category math = categories.get(1);
+        assertEquals("Math", math.getName());
     }
 
     @Test
-    public void testNestedXMLStructure() throws IOException {
+    public void testLoadXMLWithWhitespace() throws IOException {
         FileWriter writer = new FileWriter(tempFile.toFile());
-        writer.write(
-            "<Root>" +
-                "<QuestionItem>" +
-                    "<Question>" +
-                        "<Text>Main question?</Text>" +
-                    "</Question>" +
-                    "<Answers>" +
-                        "<Correct>D</Correct>" +
-                        "<Wrong>E</Wrong>" +
-                    "</Answers>" +
-                "</QuestionItem>" +
-            "</Root>"
-        );
+        writer.write("<Questions>\n" +
+            "  <QuestionItem>\n" +
+            "    <Category>  Science  </Category>\n" +
+            "    <Value>  100  </Value>\n" +
+            "    <QuestionText>  Test?  </QuestionText>\n" +
+            "    <Options>\n" +
+            "      <OptionA>  A  </OptionA>\n" +
+            "      <OptionB>  B  </OptionB>\n" +
+            "      <OptionC>  C  </OptionC>\n" +
+            "      <OptionD>  D  </OptionD>\n" +
+            "    </Options>\n" +
+            "    <CorrectAnswer>  A  </CorrectAnswer>\n" +
+            "  </QuestionItem>\n" +
+            "</Questions>");
         writer.close();
 
         XMLGameLoader loader = new XMLGameLoader(tempFile.toString());
-        List<List<String>> result = loader.load();
+        loader.load();
+        List<Category> categories = loader.getCategories();
 
-        // flattenElement should give: "Main question?", "D", "E"
-        assertEquals(1, result.size());
-        assertEquals("Main question?", result.get(0).get(0));
-        assertEquals("D", result.get(0).get(1));
-        assertEquals("E", result.get(0).get(2));
-    }
-
-    @Test
-    public void testMultipleQuestionItems() throws IOException {
-        FileWriter writer = new FileWriter(tempFile.toFile());
-        writer.write(
-            "<Root>" +
-                "<QuestionItem>" +
-                    "<Field>One</Field>" +
-                "</QuestionItem>" +
-
-                "<QuestionItem>" +
-                    "<Field>Two</Field>" +
-                "</QuestionItem>" +
-            "</Root>"
-        );
-        writer.close();
-
-        XMLGameLoader loader = new XMLGameLoader(tempFile.toString());
-        List<List<String>> result = loader.load();
-
-        assertEquals(2, result.size());
-        assertEquals("One", result.get(0).get(0));
-        assertEquals("Two", result.get(1).get(0));
-    }
-
-    @Test
-    public void testWhitespaceAndFormatting() throws IOException {
-        FileWriter writer = new FileWriter(tempFile.toFile());
-        writer.write(
-            "<Root>" +
-                "<QuestionItem>" +
-                    "<Text>   Hello World   </Text>" +
-                "</QuestionItem>" +
-            "</Root>"
-        );
-        writer.close();
-
-        XMLGameLoader loader = new XMLGameLoader(tempFile.toString());
-        List<List<String>> result = loader.load();
-
-        assertEquals("Hello World", result.get(0).get(0)); // trims whitespace
+        assertEquals(1, categories.size());
+        Questions q = categories.get(0).getQuestions().get(0);
+        assertEquals("Test?", q.getQuestions());
+        assertEquals("A", q.getOptions().get(0).getName());
     }
 
     @Test
     public void testLoadEmptyXML() throws IOException {
         FileWriter writer = new FileWriter(tempFile.toFile());
-        writer.write(""); // empty file
+        writer.write("<Questions></Questions>");
         writer.close();
 
         XMLGameLoader loader = new XMLGameLoader(tempFile.toString());
-        List<List<String>> result = loader.load();
+        loader.load();
+        List<Category> categories = loader.getCategories();
 
-        // Loader returns empty list on parsing error
-        assertTrue(result.isEmpty());
+        assertTrue(categories.isEmpty());
     }
 
     @Test
-    public void testLoadNonExistingFile() {
+    public void testLoadNonExistentFile() {
         XMLGameLoader loader = new XMLGameLoader("does_not_exist.xml");
-        List<List<String>> result = loader.load();
+        loader.load();
+        List<Category> categories = loader.getCategories();
 
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertNotNull(categories);
+        assertTrue(categories.isEmpty());
     }
 
     @Test
-    public void testDeeplyNestedElements() throws IOException {
+    public void testLoadMalformedXML() throws IOException {
         FileWriter writer = new FileWriter(tempFile.toFile());
-        writer.write(
-            "<Root>" +
-                "<QuestionItem>" +
-                    "<Wrapper>" +
-                        "<Level1>" +
-                            "<Level2>" +
-                                "<Actual>Value</Actual>" +
-                            "</Level2>" +
-                        "</Level1>" +
-                    "</Wrapper>" +
-                "</QuestionItem>" +
-            "</Root>"
-        );
+        writer.write("<Questions><QuestionItem><Category>Test</Category>"); // Missing closing tags
         writer.close();
 
         XMLGameLoader loader = new XMLGameLoader(tempFile.toString());
-        List<List<String>> result = loader.load();
+        loader.load();
+        List<Category> categories = loader.getCategories();
 
-        assertEquals(1, result.size());
-        assertEquals("Value", result.get(0).get(0));
+        assertNotNull(categories);
+    }
+
+    @Test
+    public void testLoadXMLWithMissingTags() throws IOException {
+        FileWriter writer = new FileWriter(tempFile.toFile());
+        writer.write("<Questions>\n" +
+            "  <QuestionItem>\n" +
+            "    <Category>Science</Category>\n" +
+            "    <Value>100</Value>\n" +
+            "  </QuestionItem>\n" +
+            "</Questions>");
+        writer.close();
+
+        XMLGameLoader loader = new XMLGameLoader(tempFile.toString());
+        loader.load();
+        List<Category> categories = loader.getCategories();
+
+        // Should handle missing tags gracefully
+        assertNotNull(categories);
+    }
+
+    @Test
+    public void testLoadXMLMultipleSameCategory() throws IOException {
+        FileWriter writer = new FileWriter(tempFile.toFile());
+        writer.write("<Questions>\n" +
+            "  <QuestionItem>\n" +
+            "    <Category>Science</Category>\n" +
+            "    <Value>100</Value>\n" +
+            "    <QuestionText>Q1?</QuestionText>\n" +
+            "    <Options><OptionA>A1</OptionA><OptionB>B1</OptionB><OptionC>C1</OptionC><OptionD>D1</OptionD></Options>\n" +
+            "    <CorrectAnswer>A</CorrectAnswer>\n" +
+            "  </QuestionItem>\n" +
+            "  <QuestionItem>\n" +
+            "    <Category>Science</Category>\n" +
+            "    <Value>200</Value>\n" +
+            "    <QuestionText>Q2?</QuestionText>\n" +
+            "    <Options><OptionA>A2</OptionA><OptionB>B2</OptionB><OptionC>C2</OptionC><OptionD>D2</OptionD></Options>\n" +
+            "    <CorrectAnswer>B</CorrectAnswer>\n" +
+            "  </QuestionItem>\n" +
+            "</Questions>");
+        writer.close();
+
+        XMLGameLoader loader = new XMLGameLoader(tempFile.toString());
+        loader.load();
+        List<Category> categories = loader.getCategories();
+
+        assertEquals(1, categories.size());
+        assertEquals(2, categories.get(0).getQuestions().size());
+    }
+
+    @Test
+    public void testLoadXMLWithInvalidValue() throws IOException {
+        FileWriter writer = new FileWriter(tempFile.toFile());
+        writer.write("<Questions>\n" +
+            "  <QuestionItem>\n" +
+            "    <Category>Science</Category>\n" +
+            "    <Value>NotANumber</Value>\n" +
+            "    <QuestionText>Q?</QuestionText>\n" +
+            "    <Options><OptionA>A</OptionA><OptionB>B</OptionB><OptionC>C</OptionC><OptionD>D</OptionD></Options>\n" +
+            "    <CorrectAnswer>A</CorrectAnswer>\n" +
+            "  </QuestionItem>\n" +
+            "</Questions>");
+        writer.close();
+
+        XMLGameLoader loader = new XMLGameLoader(tempFile.toString());
+        loader.load();
+        List<Category> categories = loader.getCategories();
+
+        // Should handle error gracefully
+        assertTrue(categories.isEmpty());
     }
 }

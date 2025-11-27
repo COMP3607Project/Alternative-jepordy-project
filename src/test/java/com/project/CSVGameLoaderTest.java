@@ -27,52 +27,142 @@ public class CSVGameLoaderTest {
     }
 
     @Test
-    public void testLoadSimpleCSV() throws IOException {
+    public void testLoadValidCSV() throws IOException {
         FileWriter writer = new FileWriter(tempFile.toFile());
-        writer.write("A,B,C\n");
-        writer.write("1,2,3\n");
+        writer.write("Category,Value,Question,OptionA,OptionB,OptionC,OptionD,CorrectAnswer\n");
+        writer.write("Science,100,What is H2O?,Water,Oxygen,Hydrogen,Carbon,A\n");
+        writer.write("Science,200,What is CO2?,Carbon Dioxide,Oxygen,Water,Nitrogen,A\n");
+        writer.write("History,100,Who was first president?,Washington,Lincoln,Jefferson,Adams,A\n");
         writer.close();
 
         CSVGameLoader loader = new CSVGameLoader(tempFile.toString());
-        List<List<String>> result = loader.load();
+        loader.load();
+        List<Category> categories = loader.getCategories();
 
-        assertEquals(2, result.size());
-        assertEquals(3, result.get(0).size());
-        assertEquals("A", result.get(0).get(0));
-        assertEquals("2", result.get(1).get(1));
+        assertEquals(2, categories.size());
+        
+        // Check Science category
+        Category science = categories.get(0);
+        assertEquals("Science", science.getName());
+        assertEquals(2, science.getQuestions().size());
+        
+        Questions q1 = science.getQuestions().get(0);
+        assertEquals("What is H2O?", q1.getQuestions());
+        assertEquals(100, q1.getValue());
+        assertEquals("A", q1.getAnswer());
+        assertEquals(4, q1.getOptions().size());
+        assertEquals("Water", q1.getOptions().get(0).getName());
+        
+        // Check History category
+        Category history = categories.get(1);
+        assertEquals("History", history.getName());
+        assertEquals(1, history.getQuestions().size());
+    }
+
+    @Test
+    public void testLoadCSVWithWhitespace() throws IOException {
+        FileWriter writer = new FileWriter(tempFile.toFile());
+        writer.write("Category,Value,Question,OptionA,OptionB,OptionC,OptionD,CorrectAnswer\n");
+        writer.write("  Math  , 100 , What is 2+2? , 3 , 4 , 5 , 6 , B \n");
+        writer.close();
+
+        CSVGameLoader loader = new CSVGameLoader(tempFile.toString());
+        loader.load();
+        List<Category> categories = loader.getCategories();
+
+        assertEquals(1, categories.size());
+        assertEquals("Math", categories.get(0).getName());
+        Questions q = categories.get(0).getQuestions().get(0);
+        assertEquals("What is 2+2?", q.getQuestions());
+        assertEquals("4", q.getOptions().get(1).getName());
+        assertEquals("B", q.getAnswer());
     }
 
     @Test
     public void testLoadEmptyCSV() throws IOException {
-        // empty file, leave as is
-
-        CSVGameLoader loader = new CSVGameLoader(tempFile.toString());
-        List<List<String>> result = loader.load();
-
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void testLoadNonExistingFile() {
-        CSVGameLoader loader = new CSVGameLoader("non_existing_file.csv");
-
-        // Should not throw, should return empty list
-        List<List<String>> result = loader.load();
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void testCSVValuesAreSplitCorrectly() throws IOException {
         FileWriter writer = new FileWriter(tempFile.toFile());
-        writer.write("X,Y,Z\n");
+        writer.write("Category,Value,Question,OptionA,OptionB,OptionC,OptionD,CorrectAnswer\n");
         writer.close();
 
         CSVGameLoader loader = new CSVGameLoader(tempFile.toString());
-        List<List<String>> result = loader.load();
+        loader.load();
+        List<Category> categories = loader.getCategories();
 
-        assertEquals(1, result.size());
-        assertEquals("Y", result.get(0).get(1));
+        assertTrue(categories.isEmpty());
+    }
+
+    @Test
+    public void testLoadCSVWithInsufficientColumns() throws IOException {
+        FileWriter writer = new FileWriter(tempFile.toFile());
+        writer.write("Category,Value,Question,OptionA,OptionB,OptionC,OptionD,CorrectAnswer\n");
+        writer.write("Science,100,Incomplete\n"); // Missing columns
+        writer.write("Math,200,Complete?,A,B,C,D,A\n"); // Valid row
+        writer.close();
+
+        CSVGameLoader loader = new CSVGameLoader(tempFile.toString());
+        loader.load();
+        List<Category> categories = loader.getCategories();
+
+        assertEquals(1, categories.size());
+        assertEquals("Math", categories.get(0).getName());
+    }
+
+    @Test
+    public void testLoadNonExistentFile() {
+        CSVGameLoader loader = new CSVGameLoader("non_existent_file.csv");
+        loader.load();
+        List<Category> categories = loader.getCategories();
+
+        assertNotNull(categories);
+        assertTrue(categories.isEmpty());
+    }
+
+    @Test
+    public void testLoadCSVWithInvalidValue() throws IOException {
+        FileWriter writer = new FileWriter(tempFile.toFile());
+        writer.write("Category,Value,Question,OptionA,OptionB,OptionC,OptionD,CorrectAnswer\n");
+        writer.write("Science,NotANumber,Question?,A,B,C,D,A\n");
+        writer.close();
+
+        CSVGameLoader loader = new CSVGameLoader(tempFile.toString());
+        loader.load();
+        List<Category> categories = loader.getCategories();
+
+        // Should handle error gracefully
+        assertTrue(categories.isEmpty());
+    }
+
+    @Test
+    public void testLoadCSVMultipleCategoriesSameName() throws IOException {
+        FileWriter writer = new FileWriter(tempFile.toFile());
+        writer.write("Category,Value,Question,OptionA,OptionB,OptionC,OptionD,CorrectAnswer\n");
+        writer.write("Science,100,Q1?,A,B,C,D,A\n");
+        writer.write("Science,200,Q2?,A,B,C,D,B\n");
+        writer.close();
+
+        CSVGameLoader loader = new CSVGameLoader(tempFile.toString());
+        loader.load();
+        List<Category> categories = loader.getCategories();
+
+        assertEquals(1, categories.size());
+        assertEquals(2, categories.get(0).getQuestions().size());
+    }
+
+    @Test
+    public void testLoadCSVWithEmptyFields() throws IOException {
+        FileWriter writer = new FileWriter(tempFile.toFile());
+        writer.write("Category,Value,Question,OptionA,OptionB,OptionC,OptionD,CorrectAnswer\n");
+        writer.write("Science,100,,,,,D,A\n");
+        writer.close();
+
+        CSVGameLoader loader = new CSVGameLoader(tempFile.toString());
+        loader.load();
+        List<Category> categories = loader.getCategories();
+
+        assertEquals(1, categories.size());
+        Questions q = categories.get(0).getQuestions().get(0);
+        assertEquals("", q.getQuestions());
+        assertEquals("", q.getOptions().get(0).getName());
     }
 }
+
