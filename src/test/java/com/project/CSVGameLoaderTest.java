@@ -1,16 +1,17 @@
 package com.project;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import org.junit.After;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
 
 public class CSVGameLoaderTest {
 
@@ -23,6 +24,12 @@ public class CSVGameLoaderTest {
 
     @After
     public void tearDown() throws IOException {
+        // Small delay to ensure file handles are released on Windows
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         Files.deleteIfExists(tempFile);
     }
 

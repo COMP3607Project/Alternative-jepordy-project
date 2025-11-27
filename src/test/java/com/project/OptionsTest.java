@@ -7,7 +7,7 @@ import org.junit.Test;
 public class OptionsTest {
     @Test 
     public void testOptionAnswer(){
-        Options opt = new Options("Example"); 
-        assertEquals("Example", opt.getAnswer()); 
+        Options opt = new Options("A", "Example"); 
+        assertEquals("Example", opt.getName()); 
     }
 }

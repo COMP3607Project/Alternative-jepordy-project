@@ -39,8 +39,12 @@ public class PlayTurn {
         for(int i = 1; i <= numPlayers; i++){
             System.out.println("Enter name for player " + i + ":"); 
             String name = scanner.nextLine().trim();
-            players.add(new Player(name)); 
+            Player player = new Player(name);
+            players.add(player); 
+            // Register player with Game singleton
+            Game.getInstance().addPlayer(player);
         }
+        // Don't close scanner - it closes System.in and breaks subsequent reads
     }
     // public PlayTurn(Gameboard board, Player singlePlayer){
     //     this(board, List.of(singlePlayer)); 

@@ -4,11 +4,13 @@ import java.util.Scanner;
 
 public class ChooseOption implements GameState {
     private final PlayTurn turn; 
+    private final Category category;
     private final Questions question; 
 
-    public ChooseOption(PlayTurn turn, Questions question){
-        this.turn = turn; 
-        this.question = question; 
+    public ChooseOption(PlayTurn turn, Category category, Questions question){
+        this.turn = turn;
+        this.category = category;
+        this.question = question;
     }
 
     @Override 
@@ -39,9 +41,7 @@ public class ChooseOption implements GameState {
             return;
         }
 
-        turn.setState(new AcceptAnswer(turn, question, chosenOption.getLetter())); 
-
-        
+        turn.setState(new AcceptAnswer(turn, category, question, chosenOption.getLetter()));
     
     }
 }

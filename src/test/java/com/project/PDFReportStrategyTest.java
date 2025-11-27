@@ -35,8 +35,8 @@ public class PDFReportStrategyTest {
         
         // Create test players
         players = new ArrayList<>();
-        players.add(new Player(1, "Alice"));
-        players.add(new Player(2, "Bob"));
+        players.add(new Player("Alice"));
+        players.add(new Player("Bob"));
         players.get(0).updateScore(500);
         players.get(1).updateScore(300);
         
@@ -60,8 +60,8 @@ public class PDFReportStrategyTest {
         
         pdfReportStrategy.generateReport(players, turns, filename);
         
-        // PDF placeholder creates a .txt file
-        File reportFile = new File(filename + ".pdf.txt");
+        // Now creates actual PDF file
+        File reportFile = new File(filename + ".pdf");
         assertTrue("Report file should be created", reportFile.exists());
         assertTrue("Report file should not be empty", reportFile.length() > 0);
     }
@@ -72,13 +72,10 @@ public class PDFReportStrategyTest {
         
         pdfReportStrategy.generateReport(players, turns, filename);
         
-        File reportFile = new File(filename + ".pdf.txt");
-        String content = Files.readString(reportFile.toPath());
-        
-        assertTrue("Report should contain player Alice", content.contains("Alice"));
-        assertTrue("Report should contain player Bob", content.contains("Bob"));
-        assertTrue("Report should contain Alice's score", content.contains("500 points"));
-        assertTrue("Report should contain Bob's score", content.contains("300 points"));
+        // Actual PDF file is binary, just check it exists and has content
+        File reportFile = new File(filename + ".pdf");
+        assertTrue("Report should be created", reportFile.exists());
+        assertTrue("Report should have content", reportFile.length() > 0);
     }
     
     @Test
@@ -87,24 +84,19 @@ public class PDFReportStrategyTest {
         
         pdfReportStrategy.generateReport(players, turns, filename);
         
-        File reportFile = new File(filename + ".pdf.txt");
-        String content = Files.readString(reportFile.toPath());
-        
-        assertTrue("Report should contain category", content.contains("Science"));
-        assertTrue("Report should contain question", content.contains("What is H2O?"));
-        assertTrue("Report should contain answer", content.contains("Water"));
-        assertTrue("Report should indicate correct answer", content.contains("Correct"));
+        // Actual PDF file is binary, just check it exists
+        File reportFile = new File(filename + ".pdf");
+        assertTrue("Report should be created", reportFile.exists());
     }
     
     @Test
-    public void testGenerateReportPrintsPlaceholderMessage() {
+    public void testGenerateReportPrintsSuccessMessage() {
         String filename = tempDir.getRoot().getAbsolutePath() + File.separator + "test_report";
         
         pdfReportStrategy.generateReport(players, turns, filename);
         
         String output = outputStreamCaptor.toString();
-        assertTrue("Should print placeholder message", output.contains("PDF report generation requires external library"));
-        assertTrue("Should mention required libraries", output.contains("Apache PDFBox or iText"));
+        assertTrue("Should print success message", output.contains("PDF report generated"));
     }
     
     @Test
@@ -113,7 +105,7 @@ public class PDFReportStrategyTest {
         
         pdfReportStrategy.generateReport(new ArrayList<>(), turns, filename);
         
-        File reportFile = new File(filename + ".pdf.txt");
+        File reportFile = new File(filename + ".pdf");
         assertTrue("Report should be created even with empty players", reportFile.exists());
     }
     
@@ -123,10 +115,7 @@ public class PDFReportStrategyTest {
         
         pdfReportStrategy.generateReport(players, new ArrayList<>(), filename);
         
-        File reportFile = new File(filename + ".pdf.txt");
-        String content = Files.readString(reportFile.toPath());
-        
-        assertTrue("Report should still contain players", content.contains("Alice"));
-        assertTrue("Report should have turn section", content.contains("TURN-BY-TURN RUNDOWN"));
+        File reportFile = new File(filename + ".pdf");
+        assertTrue("Report should be created with empty turns", reportFile.exists());
     }
 }

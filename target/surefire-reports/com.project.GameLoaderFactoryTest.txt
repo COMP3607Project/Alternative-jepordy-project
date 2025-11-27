@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
-Test set: com.project.DocxReportStrategyTest
+Test set: com.project.GameLoaderFactoryTest
 -------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.094 s - in com.project.DocxReportStrategyTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.003 s - in com.project.GameLoaderFactoryTest

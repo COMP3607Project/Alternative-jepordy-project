@@ -97,7 +97,7 @@ public class Game {
     }
 
     public void startGame(){
-      //  logEvent("Start Game");
+        logEvent("Start Game");
         
         System.out.println("These are the categories:"); 
         gameboard = new Gameboard();
