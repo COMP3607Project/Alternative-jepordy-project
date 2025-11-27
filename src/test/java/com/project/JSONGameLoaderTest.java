@@ -27,95 +27,151 @@ public class JSONGameLoaderTest {
     }
 
     @Test
-    public void testLoadSimpleJSON() throws IOException {
+    public void testLoadValidJSON() throws IOException {
         FileWriter writer = new FileWriter(tempFile.toFile());
-        writer.write("[[\"A\",\"B\",\"C\"],[\"1\",\"2\",\"3\"]]");
+        writer.write("[" +
+            "{" +
+                "\"Category\":\"Science\"," +
+                "\"Value\":100," +
+                "\"Question\":\"What is H2O?\"," +
+                "\"Options\":{\"A\":\"Water\",\"B\":\"Oxygen\",\"C\":\"Hydrogen\",\"D\":\"Carbon\"}," +
+                "\"CorrectAnswer\":\"A\"" +
+            "}," +
+            "{" +
+                "\"Category\":\"Math\"," +
+                "\"Value\":200," +
+                "\"Question\":\"What is 2+2?\"," +
+                "\"Options\":{\"A\":\"3\",\"B\":\"4\",\"C\":\"5\",\"D\":\"6\"}," +
+                "\"CorrectAnswer\":\"B\"" +
+            "}" +
+        "]");
         writer.close();
 
         JSONGameLoader loader = new JSONGameLoader(tempFile.toString());
-        List<List<String>> result = loader.load();
+        loader.load();
+        List<Category> categories = loader.getCategories();
 
-        assertEquals(2, result.size());
-        assertEquals(3, result.get(0).size());
-        assertEquals("A", result.get(0).get(0));
-        assertEquals("2", result.get(1).get(1));
+        assertEquals(2, categories.size());
+        
+        Category science = categories.get(0);
+        assertEquals("Science", science.getName());
+        Questions q1 = science.getQuestions().get(0);
+        assertEquals("What is H2O?", q1.getQuestions());
+        assertEquals(100, q1.getValue());
+        assertEquals("Water", q1.getOptions().get(0).getName());
+        
+        Category math = categories.get(1);
+        assertEquals("Math", math.getName());
+        Questions q2 = math.getQuestions().get(0);
+        assertEquals("4", q2.getOptions().get(1).getName());
     }
 
     @Test
     public void testLoadJSONWithWhitespace() throws IOException {
         FileWriter writer = new FileWriter(tempFile.toFile());
-        writer.write("[  [ \"X\" , \"Y\" ] , [ \"P\" , \"Q\" ] ]");
+        writer.write("[\n" +
+            "  {\n" +
+            "    \"Category\" : \"Science\" ,\n" +
+            "    \"Value\" : 100 ,\n" +
+            "    \"Question\" : \"Test?\" ,\n" +
+            "    \"Options\" : { \"A\" : \"Opt1\" , \"B\" : \"Opt2\" , \"C\" : \"Opt3\" , \"D\" : \"Opt4\" } ,\n" +
+            "    \"CorrectAnswer\" : \"A\"\n" +
+            "  }\n" +
+        "]");
         writer.close();
 
         JSONGameLoader loader = new JSONGameLoader(tempFile.toString());
-        List<List<String>> result = loader.load();
+        loader.load();
+        List<Category> categories = loader.getCategories();
 
-        // The original parser returns ONE row because whitespace breaks the split
-        assertEquals(1, result.size());
-
-        // The flattened row contains all four values in order
-        List<String> row = result.get(0);
-        assertEquals(4, row.size());
-        assertEquals("X", row.get(0));
-        assertEquals("Y", row.get(1));
-        assertEquals("P", row.get(2));
-        assertEquals("Q", row.get(3));
+        assertEquals(1, categories.size());
+        assertEquals("Science", categories.get(0).getName());
     }
+
     @Test
-    public void testLoadEmptyJSONFile() throws IOException {
-        // Write empty content
+    public void testLoadEmptyJSON() throws IOException {
         FileWriter writer = new FileWriter(tempFile.toFile());
-        writer.write("");
+        writer.write("[]");
         writer.close();
 
         JSONGameLoader loader = new JSONGameLoader(tempFile.toString());
-        List<List<String>> result = loader.load();
+        loader.load();
+        List<Category> categories = loader.getCategories();
 
-        // Depending on logic: empty → returns a list with one empty row
-        // Because split on empty string results in one row with ""
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        assertEquals(1, result.get(0).size());
-        assertEquals("", result.get(0).get(0));
+        assertTrue(categories.isEmpty());
     }
 
     @Test
-    public void testLoadNonExistingFile() {
+    public void testLoadNonExistentFile() {
         JSONGameLoader loader = new JSONGameLoader("no_such_file.json");
-        List<List<String>> result = loader.load();
+        loader.load();
+        List<Category> categories = loader.getCategories();
 
-        assertNotNull(result);
-        assertEquals(1, result.size());        // one row
-        assertEquals(1, result.get(0).size()); // one empty value
-        assertEquals("", result.get(0).get(0)); // empty string
+        assertNotNull(categories);
+        assertTrue(categories.isEmpty());
     }
 
     @Test
-    public void testLoadMultipleRows() throws IOException {
+    public void testLoadMalformedJSON() throws IOException {
         FileWriter writer = new FileWriter(tempFile.toFile());
-        writer.write("[[\"A\",\"B\"],[\"C\",\"D\"],[\"E\",\"F\"]]");
+        writer.write("[{\"Category\":\"Science\",\"Value\":}]"); // Missing value
         writer.close();
 
         JSONGameLoader loader = new JSONGameLoader(tempFile.toString());
-        List<List<String>> result = loader.load();
+        loader.load();
+        List<Category> categories = loader.getCategories();
 
-        assertEquals(3, result.size());
-        assertEquals("C", result.get(1).get(0));
-        assertEquals("F", result.get(2).get(1));
+        // Should handle error gracefully
+        assertNotNull(categories);
     }
 
     @Test
-    public void testLoadValuesAreTrimmed() throws IOException {
+    public void testLoadJSONMissingFields() throws IOException {
         FileWriter writer = new FileWriter(tempFile.toFile());
-        writer.write("[[\"  X  \",\"  Y\"],[\"Z  \",\"  W \"]]");
+        writer.write("[{\"Category\":\"Science\"}]"); // Missing most fields
         writer.close();
 
         JSONGameLoader loader = new JSONGameLoader(tempFile.toString());
-        List<List<String>> result = loader.load();
+        loader.load();
+        List<Category> categories = loader.getCategories();
 
-        assertEquals("X", result.get(0).get(0));
-        assertEquals("Y", result.get(0).get(1));
-        assertEquals("Z", result.get(1).get(0));
-        assertEquals("W", result.get(1).get(1));
+        // Should create category even with missing data
+        assertEquals(1, categories.size());
+    }
+
+    @Test
+    public void testLoadJSONMultipleSameCategory() throws IOException {
+        FileWriter writer = new FileWriter(tempFile.toFile());
+        writer.write("[" +
+            "{\"Category\":\"Science\",\"Value\":100,\"Question\":\"Q1?\",\"Options\":{\"A\":\"A1\",\"B\":\"B1\",\"C\":\"C1\",\"D\":\"D1\"},\"CorrectAnswer\":\"A\"}," +
+            "{\"Category\":\"Science\",\"Value\":200,\"Question\":\"Q2?\",\"Options\":{\"A\":\"A2\",\"B\":\"B2\",\"C\":\"C2\",\"D\":\"D2\"},\"CorrectAnswer\":\"B\"}" +
+        "]");
+        writer.close();
+
+        JSONGameLoader loader = new JSONGameLoader(tempFile.toString());
+        loader.load();
+        List<Category> categories = loader.getCategories();
+
+        assertEquals(1, categories.size());
+        assertEquals(2, categories.get(0).getQuestions().size());
+    }
+
+    @Test
+    public void testLoadJSONWithNestedQuotes() throws IOException {
+        FileWriter writer = new FileWriter(tempFile.toFile());
+        writer.write("[{" +
+            "\"Category\":\"Test\"," +
+            "\"Value\":100," +
+            "\"Question\":\"What is \\\"quoted\\\"?\"," +
+            "\"Options\":{\"A\":\"Option A\",\"B\":\"Option B\",\"C\":\"Option C\",\"D\":\"Option D\"}," +
+            "\"CorrectAnswer\":\"A\"" +
+        "}]");
+        writer.close();
+
+        JSONGameLoader loader = new JSONGameLoader(tempFile.toString());
+        loader.load();
+        List<Category> categories = loader.getCategories();
+
+        assertEquals(1, categories.size());
     }
 }
