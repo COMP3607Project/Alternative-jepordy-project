@@ -64,11 +64,13 @@ public class App
         Game game = Game.getInstance();
         
         // Create and register Logger observer
-        Logger logger = new Logger();
-        game.registerObserver(logger);
+  //      Logger logger = new Logger();
+  //      game.registerObserver(logger);
         
-        System.out.println("\n \n Welcome to jepordy! ");  
+        System.out.println("\n \n Welcome to jepordy! "); 
+      //  Game game = new Game();  
         game.startGame();
+        game.playTurn(); 
     }
 
     // private static void print(List<List<String>> records) {

@@ -45,6 +45,17 @@ public class Gameboard {
     public List<Category> getCategories(){
         return categories;
     }
+    
 
+    public Category getCategory(String name){
+        for(Category c: categories){
+            if(c.getName().equalsIgnoreCase(name)){
+                return c; 
+        }
+        
+    }
+    return null;
   
+}
+
 }
